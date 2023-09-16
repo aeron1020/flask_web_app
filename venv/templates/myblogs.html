@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}
+<title>Espasyo - My Blogs</title>
+{% endblock %}
+{% block main%}
+{% if posts %}
+<div class="mt-5"></div>
+<h1 class="about">My blogpost:</h1>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for post in posts %}
+    <div class="col">
+      <div class="card h-100">
+        <a href="{{ url_for('blog_art', title=post.title, id=post.id) }}">
+          <img
+            src="/static/uploads/{{ post.media_url }}"
+            class="card-img-top card-blog"
+            alt="{{post.title }}"
+          />
+        </a>
+        <div class="card-body">
+          <a href="{{ url_for('blog_art', title=post.title, id=post.id) }}">
+            <h5 class="card-title">{{post.title }}</h5>
+            </a>
+        </div>
+        {% if session["id"] %}
+        <div class="update">
+          <div class="btn-group dropstart">
+            <button type="button" class="btn dropdown-toggle " data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{{ url_for('update_post', post_id=post.id) }}">Update</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('delete_post', post_id=post.id) }}">Delete</a></li>
+            </ul>
+          </div>
+        </div>
+          {% endif %}
+        <small class="text-muted">{{ post.adminname }}</small>
+        <div class="card-footer">
+          <small class="text-muted">{{ post.formatted_date }}</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+        <div class="row">
+          <div class="mt-5"></div>
+          <div class="mt-5"></div>
+          <div class="col-12">
+            <p>Click <a href="/create_blog" class="text-center">here</a> to write your first blog post. </p>
+          </div>
+        </div>
+{% endif %}
+
+  {% endblock %}
+
+

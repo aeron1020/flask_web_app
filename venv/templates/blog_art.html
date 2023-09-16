@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<title>Espasyo - Article</title>
+{% endblock %}
+
+{% block main %}
+
+{% for post in posts %}
+<div class="mt-5"></div>
+<div class="row justify-content-center justify-content-md-start">
+  <div class="col-2 d-none d-sm-block"></div>
+  <div class="col-12 col-sm-8">
+    <article class="m-0 m-md-3 m-lg-5 sm-f">
+      {% if not post.media_url.endswith('.mp4') and not post.media_url.endswith('.mov') and not
+      post.media_url.endswith('.MOV') %}
+      <img id="{{ post.media_url }}" class="img-fluid blog_img" src="/static/uploads/{{ post.media_url }}" alt="{{ post.title }}{{ post.id }}">
+      {% else %}
+      <video id="{{ post.media_url }}" class="video-fluid blog_video" controls>
+        <source src="/static/uploads/{{ post.media_url }}" type="video/mp4">
+      </video>
+      {% endif %}
+      <p class="text-start fs-6 fst-italic">{{ timestamp }}</p>
+      <h2>{{ post.title }}</h2>
+      {% endfor %}
+      <div class="divider"></div>
+      <div class="col-2 d-none d-sm-block"></div>
+      {% for content in contents %}
+      {% for paragraph in content.content.split('\n') %}
+      <p class="text-start fs-5 mx-0 mx-md-3 mx-lg-5">
+        {{ paragraph|safe }}
+      </p>
+      {% endfor %}
+      {% if content.figure_media_url != 'none' %}
+        {% if not content.figure_media_url.endswith('.mp4') and not content.figure_media_url.endswith('.mov') and not
+        content.figure_media_url.endswith('.MOV')%}
+        <figure class="figure">
+          <img id="{{content.figure_media_url}}" class="figure-img img-fluid rounded" src="/static/uploads/{{ content.figure_media_url }}">
+          <figcaption class="figure-caption text-end"> {{ content.figure_description }} </figcaption>
+        </figure>
+        {% else %}
+        <figure class="figure">
+          <video id="{{content.figure_media_url}}" class=" figure-img video-fluid rounded" controls src="/static/uploads/{{ content.figure_media_url }}"
+            type="video/mp4">
+          </video>
+          <figcaption class="figure-caption text-end"> {{ content.figure_description }} </figcaption>
+        </figure>
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+    </article>
+  </div>
+</div>
+{% endblock %}
+

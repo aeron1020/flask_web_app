@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<title>Espasyo - Change Username</title>
+{% endblock %}
+
+{% block main %}
+<div class="mt-5"></div>
+<div class="change_adminname mb-3">
+    <h4>CHANGE ADMIN NAME:</h4>
+</div>
+<form action="/changeadminname" method="post">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" required id="old_adminname" name="old_adminname"
+            placeholder="Old Adminname" type="text">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" required id="new_adminname" name="new_adminname"
+            placeholder="New Adminname" type="text">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" required id="password" name="password" placeholder="Password"
+            type="password">
+            <button class="btn btn-secondary btn-sm" type="button" id="password-toggle">Show</button>
+    </div>
+    <div class="mb-3 position-relative">
+        <input class="form-control mx-auto w-auto" required id="password_confirmation" name="confirmation"
+            placeholder="Confirm Password" type="password">
+            <button class="btn btn-secondary btn-sm" type="button" id="con_password-toggle">Show</button>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+</form>
+
+
+<!-- JavaScript to toggle password visibility -->
+<script>
+
+    const new_passwordField = document.getElementById("password");
+    const new_passwordToggle = document.getElementById("password-toggle");
+
+    new_passwordToggle.addEventListener("click", () => {
+        if (new_passwordField.type === "password") {
+            new_passwordField.type = "text";
+            new_passwordToggle.textContent = "Hide";
+        } else {
+            new_passwordField.type = "password";
+            new_passwordToggle.textContent = "Show";
+        }
+    });
+
+    const con_passwordField = document.getElementById("password_confirmation");
+    const con_passwordToggle = document.getElementById("con_password-toggle");
+
+    con_passwordToggle.addEventListener("click", () => {
+        if (con_passwordField.type === "password") {
+            con_passwordField.type = "text";
+            con_passwordToggle.textContent = "Hide";
+        } else {
+            con_passwordField.type = "password";
+            con_passwordToggle.textContent = "Show";
+        }
+    });
+</script>
+
+{% endblock %}

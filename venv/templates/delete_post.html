@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+<title>Espasyo - Delete Post</title>
+
+{% endblock %}
+
+{% block main%}
+  <div class="mt-5"></div>
+  <div class="row">
+    <div class="col-12 col-sm-8">
+      <form action="{{ url_for('delete_post', post_id=post_id) }}" method="post" class="form-group-sm m-0 m-md-3 m-lg-5 sm-f" enctype="multipart/form-data" id="delete-form">
+          <div class="mb-3">
+              <h1>Verify if it's you</h1>
+              <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username"
+                  placeholder="Username" type="text">
+          </div>
+          <div class="mb-3">
+              <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+          </div>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Verify
+            </button>
+      </form>
+  </div>
+
+  </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete post</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this post?
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="delete-post-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#delete-post-btn').click(function() {
+    $('#delete-form').submit(); // Trigger the form submission when the Delete button is clicked
+  });
+});
+</script>
+
+  {% endblock %}
+
+

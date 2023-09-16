@@ -1,0 +1,234 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<title>Espasyo - Create Blogs</title>
+{% endblock %}
+
+{% block main %}
+<div class="mt-5"></div>
+<h1 class="about">Create blogpost:</h1>
+
+<form method="POST" action="/create_blog" enctype="multipart/form-data">
+    <div id="postContainer"></div>
+
+    <input type="hidden" name="num_content_fields" id="numContentFields" value="0">
+
+    <button class="add-post-button" type="button" onclick="addPost()">Add Post</button>
+
+    <button type="submit" class="publish">Publish</button>
+</form>
+
+<script>
+
+    let postCount = 0;
+    let contentCount = 1;
+
+    function addPost() {
+
+        const postContainer = document.getElementById("postContainer");
+
+        const postWrapper = document.createElement("div");
+        postWrapper.classList.add("post-container");
+
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("image-container");
+
+        const fileInput = document.createElement("input");
+        fileInput.classList.add("file-placeholder");
+        fileInput.type = "file";
+        fileInput.accept = "image/*, video/*"; // Accepts both image and video files
+        fileInput.onchange = function (event) {
+            previewFigure(event, imageContainer);
+        };
+        fileInput.name = "headimage";
+
+        const preview = document.createElement("div");
+        preview.id = "preview";
+        preview.style.display = "none";
+
+        imageContainer.appendChild(fileInput);
+
+        imageContainer.appendChild(preview);
+
+
+        const title = document.createElement("div");
+        title.classList.add("title");
+
+        const titleLabel = document.createElement("label");
+        titleLabel.htmlFor = "title";
+        titleLabel.innerText = "";
+
+        const titleInput = document.createElement("input");
+        titleInput.type = "text";
+        titleInput.classList.add("title");
+        titleInput.id = "title";
+        titleInput.name = "title";
+        titleInput.placeholder = "Title";
+        titleInput.required = true;
+
+        title.appendChild(titleLabel);
+        title.appendChild(titleInput);
+
+        postWrapper.appendChild(imageContainer);
+        postWrapper.appendChild(title);
+
+        const contentContainer = document.createElement("div");
+        contentContainer.id = "contentContainer";
+
+        const addContentButton = document.createElement("button");
+        addContentButton.classList.add("add-content-button");
+        addContentButton.type = "button";
+        addContentButton.innerText = "Add Content";
+        addContentButton.onclick = function () {
+            addContent(contentContainer.id);
+        };
+
+        const removePostButton = document.createElement("button");
+        removePostButton.classList.add("remove-post-button");
+        removePostButton.type = "button";
+        removePostButton.innerText = "Remove Post";
+        removePostButton.onclick = function () {
+            removePost(postWrapper);
+        };
+
+        postWrapper.appendChild(contentContainer);
+        postWrapper.appendChild(addContentButton);
+        postWrapper.appendChild(removePostButton);
+
+        postContainer.appendChild(postWrapper);
+
+    }
+
+    function removePost(postWrapper) {
+        const postContainer = document.getElementById("postContainer");
+        postContainer.removeChild(postWrapper);
+    }
+
+    function previewFile(event, container) {
+
+    }
+
+    function addContent(containerId) {
+        const contentContainer = document.getElementById(containerId);
+
+        const contentWrapper = document.createElement("div");
+        contentWrapper.classList.add("content-container");
+
+        const textarea = document.createElement("textarea");
+        textarea.name = `content${containerId}_${postCount}`;
+        textarea.rows = "10";
+        textarea.placeholder = "Write your content here...";
+        textarea.name = `content${containerId}_${contentCount}`;
+
+        const figureContainer = document.createElement("div");
+        figureContainer.classList.add("figure-container");
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*, video/*"; // Accepts both image and video files
+        fileInput.onchange = function (event) {
+            previewFigure(event, figureContainer);
+        };
+        fileInput.name = "figure" + contentCount;
+
+        const preview = document.createElement("div");
+        preview.style.display = "none";
+
+        const description = document.createElement("textarea");
+        description.name = `figureDescription${containerId}_${contentCount}`;
+        description.rows = "3";
+        description.placeholder = "Enter figure description";
+
+        const removeFigureButton = document.createElement("button");
+        removeFigureButton.classList.add("remove-figure-button");
+        removeFigureButton.type = "button";
+        removeFigureButton.innerText = "Remove Figure";
+        removeFigureButton.onclick = function () {
+            removeFigure(figureContainer);
+        };
+
+        figureContainer.appendChild(fileInput);
+        figureContainer.appendChild(preview);
+        figureContainer.appendChild(description);
+        figureContainer.appendChild(removeFigureButton);
+
+        contentWrapper.appendChild(textarea);
+        contentWrapper.appendChild(figureContainer);
+
+        contentContainer.appendChild(contentWrapper);
+
+        // Update the value of numContentFields input field
+        const numContentFieldsInput = document.getElementById("numContentFields");
+        numContentFieldsInput.value = contentCount++;
+    }
+
+    function removeFigure(figureContainer) {
+        const contentWrapper = figureContainer.parentNode;
+        contentWrapper.removeChild(figureContainer);
+    }
+
+    function previewFigure(event, figureContainer) {
+        const input = event.target;
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            container.innerHTML = '';
+            container.appendChild(preview);
+            input.style.display = "none";
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function previewFigure(event, figureContainer) {
+        const input = event.target;
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            const preview = document.createElement("div");
+            preview.style.display = "block";
+
+            if (file.type.includes("image")) {
+                const image = document.createElement("img");
+                image.src = URL.createObjectURL(file);
+                image.alt = "Figure Preview";
+                image.style.display = "block";
+                preview.appendChild(image);
+            } else if (file.type.includes("video")) {
+                const video = document.createElement("video");
+                video.src = URL.createObjectURL(file);
+                video.autoplay = false;
+                video.loop = false;
+                video.controls = true;
+                video.style.display = "block";
+                preview.appendChild(video);
+            }
+
+            // Remove previous preview if exists
+            const previousPreview = figureContainer.querySelector("div");
+            if (previousPreview) {
+                figureContainer.removeChild(previousPreview);
+            }
+
+            figureContainer.insertBefore(preview, input);
+            input.style.display = "none";
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    // Hide the submit button initially
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.style.display = "none";
+
+    // Display the submit button when the first post is added
+    const addPostButton = document.querySelector('.add-post-button');
+    addPostButton.addEventListener('click', function () {
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.style.display = "inline-block";
+        addPostButton.style.display = "none";
+    });
+</script>
+{% endblock %}

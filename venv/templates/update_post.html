@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<title>Espasyo - Updating Post</title>
+{% endblock %}
+
+{% block main%}
+    <div class="mt-5"></div>
+    <h1 class="about">Update blogpost:</h1>
+    <div class="row">
+      {% for post in posts %}
+      <div class="col-12 col-sm-8">
+        <form action="/blogs/update_post/{{ post.id }}" method="post" class="form-group-sm m-0 m-md-3 m-lg-5 sm-f" enctype="multipart/form-data" id="update">
+            <div>
+                <input class="blog_img img-fluid" type="file" name="headimage" accept="image/*, video/*" onchange="previewMedia(this, 'headPreview')">
+                <div id="headPreview"></div>
+            </div>
+
+            <div class="title">
+                <h2><input type="text" name="title" value="{{ post.title }}" required></h2>
+            </div>
+
+            <div class="divider"></div>
+
+            {% for content in contents %}
+            <div class="content-container">
+                <textarea class="auto-expand" name="content{{ content.id }}">{{ content.content }}</textarea>
+            </div>
+
+            <label for="media">Figure Media:</label>
+            <input type="file" name="figure{{ content.id }}" accept="image/*, video/*" class="blog_img img-fluid" onchange="previewMedia(this, 'figurePreview{{ content.id }}')">
+            <div id="figurePreview{{ content.id }}"></div>
+
+            <div class="figure_description">
+                <textarea class="auto-expand figure-caption text-end" name="figure_description{{ content.id }}">{{ content.figure_description }}</textarea>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="publish">Save Changes</button>
+        </form>
+    </div>
+
+
+      {%endfor%}
+    </div>
+
+<script>
+    // Function to automatically adjust textarea height
+function autoExpand(element) {
+    element.style.height = "auto";
+    element.style.height = (element.scrollHeight) + "px";
+}
+
+// Attach the autoExpand function to each textarea with the 'auto-expand' class
+const textareas = document.querySelectorAll(".auto-expand");
+textareas.forEach((textarea) => {
+    textarea.addEventListener("input", () => {
+        autoExpand(textarea);
+    });
+    // Initial call to autoExpand to adjust textarea height on page load
+    autoExpand(textarea);
+});
+
+function previewMedia(input, previewId) {
+    const preview = document.getElementById(previewId);
+    preview.innerHTML = ''; // Clear previous preview
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            if (file.type.startsWith('image')) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-image');
+                preview.appendChild(img);
+            } else if (file.type.startsWith('video')) {
+                const video = document.createElement('video');
+                video.src = e.target.result;
+                video.controls = true;
+                video.classList.add('preview-video');
+                preview.appendChild(video);
+            }
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+</script>
+
+    {% endblock %}
+
+

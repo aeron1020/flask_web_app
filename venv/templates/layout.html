@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+
+    <!-- http://getbootstrap.com/docs/5.1/ -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+
+    <!-- https://favicon.io/emoji-favicons/money-bag/ -->
+    <link href="/static/favicon_io/favicon.ico" rel="icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha384-blOohCVdhjmtROpu8+CfTnUWham9nkX7P7OZQMst+RUnhtoY/9qemFAkIKOYxDI3" crossorigin="anonymous">
+    <link href="/static/styles.css" rel="stylesheet">
+
+    {% block title %}
+    <title>Espasyo</title>
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <nav class="border navbar navbar-expand-md navbar-light" id="hide">
+        <div class="container">
+            <a class="navbar-brand" href="/">Espasyo</a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+
+                {% if session["id"] %}
+                <ul class="navbar-nav me-auto mt-2">
+                    <li class="nav-item"><a class="nav-link" href="/create_blog">Create Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/myblogs">MyBlogs</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto mt-2">
+                    <li class="nav-item"><a class="nav-link" href="/blogs">Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/settings">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto mt-2">
+                    <li class="nav-item"><a class="nav-link" href="/blogs">Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/adminlogin">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/adminregister">Want to write?</a></li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="mt-5"></div>
+    <header>
+        <div class="alerto alert-{{ category }} mb-0 text-center" role="alert">
+            {{ get_flashed_messages() | join(" ") }}
+        </div>
+    </header>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <main class="container py-5 text-center">
+        {% block main %}{% endblock %}
+    </main>
+    <div class="divider"></div>
+    <footer class="mb-5 small text-center text-muted">
+        <p>2023 OlsenAeron. All rights reserved.</p>
+    </footer>
+
+</body>
+<script>
+    let prevScrollpos = window.pageYOffset;
+    window.onscroll = function () {
+        let currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+            document.getElementById("hide").classList.remove("hidden");
+        } else {
+            document.getElementById("hide").classList.add("hidden");
+        }
+        prevScrollpos = currentScrollPos;
+    }
+</script>
+
+<!-- openai -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#send-btn').on('click', function () {
+            var message = $('#message-input').val();
+
+            <!-- // Clear input field -->
+            $('#message-input').val('');
+
+            // Display user message
+            displayMessage(message, 'user-message');
+
+            // Send message to the server
+            sendMessage(message);
+        });
+
+        function sendMessage(message) {
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Send the message as a POST request to '/api' route
+            $.ajax({
+                url: '/api',
+                method: 'POST',
+                data: { message: message },
+                success: function (response) {
+                    // Hide typing indicator
+                    hideTypingIndicator();
+
+                    // Display response message
+                    displayMessage(response, 'response-message');
+                },
+                error: function () {
+                    // Hide typing indicator
+                    hideTypingIndicator();
+
+                    // Handle error
+                    displayMessage('Error occurred. Please try again.', 'response-message');
+                }
+            });
+        }
+
+        function displayMessage(message, className) {
+            var chatMessages = $('#chat-messages');
+            var chatBubble = $('<div>').addClass('alert').addClass(className).text(message);
+
+
+            // Add line breaks before each number or bullet point
+            var formattedMessage = message.replace(/(\d+\.\s)|(\u2022)|(\n)/g, '<br>&nbsp;&nbsp;&nbsp;&nbsp;$&');
+
+
+            chatBubble.html(formattedMessage);
+            chatMessages.append(chatBubble);
+
+
+            // Scroll to bottom of chat window
+            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+        }
+
+        // Function to simulate a typing indicator
+        function showTypingIndicator() {
+            var typingIndicator = $('<div>').addClass('typing-indicator').text('Typing...');
+            $('#chat-messages').append(typingIndicator);
+        }
+
+        // Function to hide the typing indicator
+        function hideTypingIndicator() {
+            $('.typing-indicator').remove();
+        }
+    });
+    //     function displayMessage(message, className) {
+    //     var chatMessages = $('#chat-messages');
+    //     var chatBubble = $('<div>').addClass('alert').addClass(className);
+    //     var chatParagraph = $('<p>').addClass('bg-light').text(message);
+
+    //     // Add line breaks before each number or bullet point
+    //     var formattedMessage = message.replace(/(\d+\.\s)|(\u2022)|(\n)/g, '<br>&nbsp;&nbsp;&nbsp;&nbsp;$&');
+
+    //     chatBubble.append(chatParagraph.html(formattedMessage));
+    //     chatMessages.append(chatBubble);
+
+    //     // Scroll to bottom of chat window
+    //     chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    //   }
+    // });
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     setBackground();
+
+    //     setInterval(setBackground, 60000); // Update background every minute
+    // });
+
+</script>
+
+</html>

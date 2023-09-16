@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}
+<title>Espasyo - All Blogs</title>
+{% endblock %}
+{% block main%}
+  <div class="mt-5"></div>
+  <h1 class="about">Read more blogpost:</h1>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for post in posts %}
+    <div class="col">
+      <div class="card h-100">
+        <a href="{{ url_for('blog_art', title=post.title, id=post.id) }}">
+          <img
+            src="/static/uploads/{{ post.media_url }}"
+            class="card-img-top card-blog"
+            alt="{{post.title }}"
+          />
+        </a>
+        <div class="card-body">
+          <a href="{{ url_for('blog_art', title=post.title, id=post.id) }}">
+            <h5 class="card-title">{{post.title }}</h5>
+            </a>
+        </div>
+        <small class="text-muted">{{ post.adminname }}</small>
+        <div class="card-footer">
+            <small class="text-muted">{{ post.formatted_date }}</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  {% endblock %}
+
+

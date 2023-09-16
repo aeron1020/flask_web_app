@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<title>Espasyo - Home</title>
+{% endblock %}
+
+{% block main %}
+<div class="mt-5"></div>
+<div class="row hero">
+  <div class="card-fluid mb-3" style="max-width: 100%;">
+    <div class="row g-0">
+  {% for post in posts %}
+      <div class="col-md-6">
+        <img src="/static/uploads/{{ post.media_url }}" class="card-img-top big_card" alt="...">
+      </div>
+      <div class="col-md-6">
+        <div class="card-body">
+        <a href="{{ url_for('blog_art', title=post.title, id=post.id) }}">
+          <h1 class="card-title card_hero">{{ post.title }}</h1>
+        </a>
+        {% if post.content %}
+        <h5 class="card-text">{{ ' '.join(post.content.split()[:15]) + '...' }}</h5>
+        {% endif %}
+    <p class="card-text fst-italic">{{ post.formatted_date }}</p>
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+{%endfor%}
+
+<div class="mt-5"></div>
+{% if blogs %}
+<div><h1>Latest Articles</h1></div>
+<div class="mt-5"></div>
+<div class="mt-5"></div>
+{% endif %}
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for blog in blogs %}
+    <div class="col">
+      <div class="card h-100">
+        <a href="{{ url_for('blog_art', title=blog.title, id=blog.id) }}">
+          <img
+            src="/static/uploads/{{ blog.media_url }}"
+            class="card-img-top card-blog"
+            alt="{{blog.title }}"
+          />
+        </a>
+        <div class="card-body">
+          <a href="{{ url_for('blog_art', title=blog.title, id=blog.id) }}">
+            <h5 class="card-title">{{blog.title }}</h5>
+            </a>
+        </div>
+        <small class="text-muted">{{ blog.adminname }}</small>
+        <div class="card-footer">
+            <small class="text-muted">{{ blog.formatted_date }}</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+
+
